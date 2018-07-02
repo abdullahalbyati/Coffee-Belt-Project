@@ -1,4 +1,38 @@
-title: Course Title Here
-description: A description of the course.
-programming_language: r
-from: 'r-base-prod:v1.0.0'
+---
+title: "Coffee Around The World"
+author: "Abdullah Albyati"
+date: "September 3, 2017"
+output: html_document
+---
+
+###This interative map shows the countries that falls in the so called ["Coffee Belt"](https://en.wikipedia.org/wiki/Coffee_bean) click on each icon for that country's coffee tasting notes and a link to purchase a single origin 100% coffee from that country 
+
+links are affiliate Amazon links
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10}
+library(leaflet)
+library(readxl)
+CoffeeLinks <- read_excel("~/Coffeebelt/CoffeeLinks.xlsx")
+CountriesCorrdinates <- read_excel("~/Coffeebelt/CountriesCorrdinates.xlsx")
+TasteNotes <- read_excel("~/Coffeebelt/TasteNotes.xlsx")
+CoffeeCountries <- read_excel("~/Coffeebelt/CoffeeCountries.xlsx")
+
+
+CoffeelinksHyper <- CoffeeLinks$URL <- paste0("<b><a href='",CoffeeLinks$URL,"' target='_blank'>",
+                                              CoffeeCountries$Country, "<br/>", "</a>", 
+                                              "Click Above To Purchase", 
+                                              "<br/>", TasteNotes$Discription)
+CoffeeIcon <- makeIcon(
+  iconUrl = "http://icons.iconarchive.com/icons/graphicloads/food-drink/256/coffee-bean-icon.png",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+CountriesCorrdinates %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(~Long, ~Lat, icon = CoffeeIcon,
+             popup = CoffeelinksHyper)
+  
+```
+
+
